@@ -1,0 +1,42 @@
+In order to understand how created orders/ processed orders and delivered orders vary on a week day, we complete our
+initial queries like this and proceeded to create the same tables, and unions.
+
+Select OrderId, Shipping_country,
+extract(week from Order_creation_date ) as week_order,
+FORMAT_DATE("%A" , Order_creation_date ) as day_order,
+count (distinct OrderID) as total_orders,
+count (distinct Shipment_carton_number) as total_cartons,
+FROM `vidaxl-401316.key1213.orderdata_new`
+group by OrderID, Shipping_country, Order_creation_date
+Saved results as OC_weekday
+
+Select OrderId, Shipping_country,
+extract(week from Order_processed_date ) as week_order,
+FORMAT_DATE("%A" , Order_processed_date ) as day_order,
+count (distinct OrderID) as total_orders,
+count (distinct Shipment_carton_number) as total_cartons,
+FROM `vidaxl-401316.key1213.orderdata_new`
+group by OrderID, Shipping_country, Order_processed_date
+Saved results as OP_weekday
+
+Select OrderId, Shipping_country,
+extract(week from Delivery_time ) as week_order,
+FORMAT_TIMESTAMP("%A", TIMESTAMP (Delivery_time), "UTC") as day_order,
+count (distinct OrderID) as total_orders,
+count (distinct Shipment_carton_number) as total_cartons,
+FROM `vidaxl-401316.key1213.orderdata_new`
+group by OrderID, Shipping_country, Delivery_time
+Saved results as OD_weekday
+
+SELECT *,
+FROM `project-401316.key1213.OC_weekday`
+UNION ALL
+SELECT *
+FROM `project-401316.key1213.OP_weekday`
+UNION ALL
+SELECT *,
+FROM `project-401316.key1213.OD_weekday`
+
+
+Saved results as BigQuery table O_CPD_weekday
+After pivoting we get this distribution of orders and cartoons.
