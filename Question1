@@ -1,0 +1,8 @@
+We will use batch import
+CreateProject project-401316
+We will create dataset, name it key1212
+Select FR region
+We proceed to CREATE TABLE and select Upload under the Source section
+Name the table: channel_merchant_bpfr
+SELECT OUTDETECT SCHEMA
+Advance Options - Select Header information and write 1 where header ignore info is 0
