@@ -53,3 +53,22 @@ FROM `project-401316.key1213.orderdata_new`
 
 
 Saved table, opened CSV in Google Sheets and pivoted.
+
+
+The results show us that Germany has a big latency from order creation to order delivery. Since the process if
+Order Created < Order Processed < Ordered Delivered / Paid it’s only normal that this latency propagates at other
+stages ( processed / payment).
+
+CH & FR seem to have a big delay between the days the order has been created up to the days the order has been
+processed.
+
+Given this table, it is safe to say that all countries process payments within a day from order creation.
+Since DE is the biggest market in the dataset provided, I would investigate the frequency with which delays occur for all
+orders, and is it an issue stemmed from different infrastructure communications and not a real issue. Sometimes, in a
+warehouse we could use different technologies for different scopes, and their APIs might have different time zones,
+which could influence the reporting of latency. If we exclude this option, we would have to discuss directly with the
+employees in the warehouse and understand what are some of the major dealbreakers in the way their work processes
+are currently set up. We should try to experiment and see what modifications to this current setup brings the most
+efficiency, for workers and the company. Also, taking information direct from warehouse floor, will help us better design
+solutions to problems that might already occur, can help us prevent future problems, and helps us keep employees
+motivated and happy, which in itself it’s an important factor for overall company productivity.
