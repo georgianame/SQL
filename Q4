@@ -1,0 +1,55 @@
+For each shipping country, which stage of the delivery (order creation, order processing or shipment) is
+taking the longest time? Can you think of any way to improve our efficiency in this stage?
+
+SELECT distinct *,
+extract(week from Order_creation_date ) as week_order_creation,
+extract(week from Order_processed_date ) as week_order_processed,
+extract(week from Payment_date) as week_payment,
+extract(week from Delivery_time) as week_delivered,
+extract(day from Order_processed_date ) as day_order_processed,
+extract(day from Payment_date) as day_payment,
+extract(day from Delivery_time) as day_delivered,
+FORMAT_TIMESTAMP( "20%Y-%m-%d", TIMESTAMP (Delivery_time), "UTC") as Delivery_date,
+FORMAT_DATE('%A', Order_creation_date) AS weekday_name_full_order_creation,
+FORMAT_DATE('%A', Order_processed_date) AS weekday_name_full_order_processed,
+FORMAT_DATE('%A', Payment_date) AS weekday_name_full_order_paid,
+FORMAT_TIMESTAMP( "%A", TIMESTAMP (Delivery_time), "UTC") AS weekday_name_full_order_delivery,
+count (distinct OrderID) over (partition by extract(week from Order_creation_date )) as
+distinct_total_orders_per_week,
+count (distinct Shipment_carton_number) over (partition by OrderID) as
+distinct_cartons_per_order,
+count (distinct SKU) over (partition by OrderID) as skus_per_order,
+date_diff(
+date(Order_creation_date),
+coalesce(date(lag(Order_creation_date) over(partition by Shipping_country order by OrderID )),
+date(Payment_date)),day
+) country_creation_payment_latency,
+date_diff(
+date(Order_processed_date),
+coalesce(date(lag(Order_processed_date) over(partition by Shipping_country order by
+OrderID )), date(Order_creation_date)), day
+) country_processed_creation_latency,
+date_diff(
+date(Order_processed_date),
+coalesce(date(lag(Order_processed_date) over(partition by Shipping_country order by
+OrderID )), date(Payment_date)),day
+) country_processed_payment_latency,
+date_diff(
+date(FORMAT_TIMESTAMP("20%Y-%m-%d", TIMESTAMP(Delivery_time), “UTC")),
+coalesce(date(lag(FORMAT_TIMESTAMP( "20%Y-%m-%d", TIMESTAMP (Delivery_time), "UTC")) over(partition
+by Shipping_country order by OrderID )), date(Order_processed_date)), day
+) country_delivery_processed_latency,
+date_diff(
+date(FORMAT_TIMESTAMP("20%Y-%m-%d", TIMESTAMP (Delivery_time), "UTC")),
+coalesce(date(lag(FORMAT_TIMESTAMP( "20%Y-%m-%d", TIMESTAMP (Delivery_time), "UTC"))
+over(partition by Shipping_country order by OrderID )), date(Order_creation_date)), day
+) country_delivery_creation_latency,
+date_diff(
+date(FORMAT_TIMESTAMP("20%Y-%m-%d", TIMESTAMP (Delivery_time), "UTC")),
+coalesce(date(lag(FORMAT_TIMESTAMP( "20%Y-%m-%d", TIMESTAMP (Delivery_time), "UTC")) over(partition
+by Shipping_country order by OrderID )), date(Payment_date)), day
+) country_delivery_payment_latency,
+FROM `project-401316.key1213.orderdata_new`
+
+
+Saved table, opened CSV in Google Sheets and pivoted.
