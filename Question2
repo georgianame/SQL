@@ -1,0 +1,15 @@
+From our main warehouse located in Venlo, the Netherlands, we send orders to customers in 27 different
+European countries on a daily basis. These customers can order products on any of our online platforms
+that are available in their specific country (company webshops, eBay, Amazon, and many others).
+Naturally, we need to deliver each order as fast as possible, and at least within the delivery time that is
+displayed on our platform. The actual delivery time depends on different factors, which can be both
+internal (order processing time) and external processes (payment time and shipping time). The Logistics
+department needs to handle customer orders as efficiently as possible, and therefore needs to make a
+daily workload planning. Furthermore, it is important to know how long each process takes, and where
+we have opportunities to optimise processing times. The dataset file ‘Order data.xlsx’ contains daily
+order data for the weeks 20-29 of 2017, of some of our main European markets:
+• Order ID and shipping country
+• Product code (SKU) and quantity ordered
+• Number of the shipment (internal Logistics number)
+• Payment date/time, order creation date/time, ‘order processed’ date/time (when ready for
+shipment), and delivery time (delivered to the customer)
