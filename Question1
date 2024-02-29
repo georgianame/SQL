@@ -3,6 +3,13 @@ CreateProject project-401316
 We will create dataset, name it key1212
 Select FR region
 We proceed to CREATE TABLE and select Upload under the Source section
-Name the table: channel_merchant_bpfr
+Name the table: bonprix_fr
 SELECT OUTDETECT SCHEMA
 Advance Options - Select Header information and write 1 where header ignore info is 0
+
+SELECT 
+FORMAT_TIMESTAMP (%Y-%m-%d, TIMESTAMP (Date_created), "UTC") as Order_date,
+Count (distinct Order_number) as total_orders,
+sum (Quantity) as total_quantity,
+FROM `project-401316.key1212.bonprix_fr`
+group by 1
