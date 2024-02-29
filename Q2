@@ -1,0 +1,49 @@
+Using the historical order data from weeks 20-29, please provide a daily workload planning for the week
+30, per shipping country.
+How many orders can we expect?
+How many shipment cartons will we send?
+How is the workload distributed between the weekdays?
+
+Select
+OrderId, Shipping_country,
+extract(week from Order_creation_date ) as week_order_created,
+count (distinct OrderID) as total_orders_created,
+count (distinct Shipment_carton_number) as total_cartons_created,
+FROM `project-401316.key1213.orderdata_new`
+group by OrderID, Shipping_country, Order_creation_date
+
+Saved Table as BigQueryTable Orders_created.
+
+Select
+OrderId, Shipping_country,
+extract(week from Order_processed_date ) as week_order_processed,
+count (distinct OrderID) as total_orders_processed,
+count (distinct Shipment_carton_number) as total_cartons_processed,
+FROM `project-401316.key1213.orderdata_new`
+group by OrderID, Shipping_country, Order_processed_date
+
+Saved BigQuery table as Orders_processed.
+
+Select
+OrderId, Shipping_country,
+extract(week from Delivery_time ) as week_order_delivered,
+count (distinct OrderID) as total_orders_delivered,
+count (distinct Shipment_carton_number) as total_cartons_delivered,
+FROM `project-401316.key1213.orderdata_new`
+group by OrderID, Shipping_country, Delivery_time
+Saved BigQuery table as Orders_delivered.
+
+SELECT *,
+FROM `project-401316.key1213.Orders_created`
+UNION ALL
+SELECT *,
+FROM `project-401316.key1213.Orders_processed`
+UNION ALL
+SELECT *,
+FROM FROM `project-401316.key1213.Orders_delivered`
+
+Saved Results in BigQuery table totals_c_p_d
+Moved data into Drive/ Sheets/ CSV, removed duplicates and pivoted.
+
+We can see that some orders have been created/ processed/ delivered prior to week30 for week 30. We should provision
+those into our planing as well
