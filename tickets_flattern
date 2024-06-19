@@ -1,0 +1,40 @@
+WITH your_data AS (
+  -- Ensure table and schema exist, and column "tickets" is a string
+  SELECT _id,
+         _fivetran_deleted,  
+         _fivetran_synced,
+         display_name,
+         email,
+         newsletter,
+         -- Assuming tickets holds a single JSON object as a string
+         tickets AS raw_tickets  -- Rename for clarity
+  FROM `table.id` AS u
+)
+SELECT
+  -- Existing user data from "users" table
+  your_data._id AS _id,
+  your_data._fivetran_deleted,
+  your_data._fivetran_synced,
+  your_data.display_name,
+  your_data.email,
+  your_data.newsletter,
+  -- Parse the raw_tickets string as JSON (handle potential errors)
+  CASE 
+    WHEN your_data.raw_tickets IS NOT NULL THEN SAFE.PARSE_JSON(your_data.raw_tickets)
+    ELSE NULL 
+  END AS selections,
+  -- Extract selections field if it exists and is a valid JSON
+  ARRAY(
+    SELECT AS STRUCT
+      selection.key AS key,  -- Assuming your JSON object has a field named 'key'
+      selection.value AS value  -- Assuming your JSON object has a field named 'value'
+    FROM UNNEST(
+      CASE 
+        WHEN your_data.raw_tickets IS NOT NULL AND SAFE.PARSE_JSON(your_data.raw_tickets) IS NOT NULL THEN 
+          [SAFE.PARSE_JSON(your_data.raw_tickets)]
+        ELSE 
+          []
+      END
+    ) AS selection
+  ) AS flattened_selections
+FROM your_data
